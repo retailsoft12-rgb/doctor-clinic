@@ -12,4 +12,6 @@ next: phase-4-round-trip.md
 4. **component.html → c-ao-spinner** — overlay at root template
 5. **component.js → wire service + LDS** — `_wiredXId = value` → `$param` changed
 
+You cannot go before check that all participant is exist
+
 → Go to [phase-4-round-trip.md](phase-4-round-trip.md).

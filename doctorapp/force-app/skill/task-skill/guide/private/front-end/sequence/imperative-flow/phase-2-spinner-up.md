@@ -10,4 +10,6 @@ next: phase-3-round-trip.md
 2. **component.js ⇢ component.html** — re-render
 3. **component.html → c-ao-spinner** — overlay at root template
 
+
+You cannot go before check that all participant is exist
 → Go to [phase-3-round-trip.md](phase-3-round-trip.md).

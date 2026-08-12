@@ -362,6 +362,7 @@ public with sharing class <Name>Dao {
 
 ---
 
+You cannot go before check that all participant is exist
 ## → Next: [Phase 2 — Delegate to service](phase-2-delegate-to-service.md)
 
 The controller now holds the **resolved records**. Continue there for the

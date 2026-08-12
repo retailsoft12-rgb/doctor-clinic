@@ -17,4 +17,6 @@ Will this assignment reach the server?
 
 5. **wire service + LDS ⇢ component.js** — served from LDS cache — no round-trip
 
+You cannot go before check that all participant is exist
+
 → Go to [phase-3-spinner-and-gating-field.md](phase-3-spinner-and-gating-field.md).

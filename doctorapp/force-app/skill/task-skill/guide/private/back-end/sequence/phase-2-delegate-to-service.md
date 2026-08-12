@@ -232,6 +232,7 @@ public static <Object>__c complete<Noun>(<Object>__c record) {
 
 ---
 
+You cannot go before check that all participant is exist
 ## → Next: [Phase 3 — Persist](phase-3-persist.md)
 
 Every business rule has passed. Continue there for the DML, the cross-domain

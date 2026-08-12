@@ -14,4 +14,6 @@ next: phase-6-clear-the-flag.md
 
 3. **component.js → ShowToastEvent** — `!success | error` → `toast(error)`
 
+You cannot go before check that all participant is exist
+
 → Go to [phase-6-clear-the-flag.md](phase-6-clear-the-flag.md).
