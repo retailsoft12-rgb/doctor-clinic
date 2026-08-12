@@ -24,15 +24,15 @@ When the principal load method returns multiple entity types, **don't merge them
 export default class ManageItems extends LightningElement {
     // ❌ WRONG: Merged into one state
     @track workspaceData = {
-        buckets: [],
-        unassignedItems: [],
-        topics: []
+        principalState1: [],
+        principalState2: [],
+        principalState3: []
     };
 
     // ✅ CORRECT: Separate principal states
-    @track buckets = [];           // Principal state 1: Can CRUD buckets
-    @track unassignedItems = [];    // Principal state 2: Can CRUD unassigned items
-    @track topics = [];             // Principal state 3: Can CRUD topics
+    @track principalState1 = [];           // Principal state 1: Can CRUD principalState1
+    @track principalState2 = [];    // Principal state 2: Can CRUD principalState2
+    @track principalState3 = [];             // Principal state 3: Can CRUD principalState3
 
     connectedCallback() {
         this.loadPrincipalData();
@@ -40,9 +40,9 @@ export default class ManageItems extends LightningElement {
 
     async loadPrincipalData() {
         const result = await loadWorkspaceData({ workspaceId: this.workspaceId });
-        this.buckets = result.data.buckets;           // Principal state 1
-        this.unassignedItems = result.data.items;    // Principal state 2
-        this.topics = result.data.topics;               // Principal state 3
+        this.principalState1 = result.data.principalState1;           // Principal state 1
+        this.principalState2 = result.data.items;    // Principal state 2
+        this.principalState3 = result.data.principalState3;               // Principal state 3
     }
 }
 ```
@@ -51,9 +51,9 @@ export default class ManageItems extends LightningElement {
 
 | Principal State | Loaded by | CRUD Operations |
 |---|---|---|
-| `buckets[]` | `loadWorkspaceData()` | Create bucket, read bucket, update bucket, delete bucket |
-| `unassignedItems[]` | `loadWorkspaceData()` | Create item, read item, update item, delete item |
-| `topics[]` | `loadWorkspaceData()` (if included) | Create topic, read topic, update topic, delete topic |
+| `principalState1[]` | `loadWorkspaceData()` | Create bucket, read bucket, update bucket, delete bucket |
+| `principalState2[]` | `loadWorkspaceData()` | Create item, read item, update item, delete item |
+| `principalState3[]` | `loadWorkspaceData()` (if included) | Create topic, read topic, update topic, delete topic |
 
 ## When to Create a New Principal State
 
@@ -65,18 +65,18 @@ A new feature is principal data when:
 4. **It's not a server indicator** (Case 2: pagination/sync metadata)
 
 ```javascript
-// ✅ If the feature loads buckets at init time:
+// ✅ If the feature loads principalState1 at init time:
 async connectedCallback() {
-    const result = await loadBuckets({ workspaceId: this.workspaceId });
-    this.buckets = result.data;  // New principal state
+    const result = await loadPrincipalState1({ workspaceId: this.workspaceId });
+    this.principalState1 = result.data;  // New principal state
 }
 
-// ✅ If the user can create, update, delete buckets:
+// ✅ If the user can create, update, delete principalState1:
 handleCreateBucket(event) {
     const newBucket = { name: event.detail.name, ... };
     createBucket(newBucket)
         .then(res => {
-            this.buckets = [...this.buckets, res.data];  // Update principal state
+            this.principalState1 = [...this.principalState1, res.data];  // Update principal state
         });
 }
 ```
@@ -86,11 +86,13 @@ handleCreateBucket(event) {
 A child component may load the same entity type as its parent (e.g., bucket items), but if it's **loaded in isolation within a child flow**, it has its own principal state tracking:
 
 ```javascript
-// Parent holds buckets with nested items:
-// this.buckets[0] = { id: 'bucket-1', items: [...] }
+// Parent holds principalState1 with nested items:
+// this.principalState1[0] = { id: 'bucket-1', items: [...] }
 
 // Child loads the same bucket's items in isolation:
-@track bucketItems = [];  // Child's separate principal state
+@track subDataOfPrincipalState1 = [];  // Child's separate principal state
+@track principalState2 = []; // It can be also like this 
+@track buckeItems = []; //working example
 
 connectedCallback() {
     loadBucketItems({ bucketId: this.bucketId })
@@ -99,7 +101,7 @@ connectedCallback() {
         });
 }
 
-// IMPORTANT: Parent's buckets[0].items ≠ Child's bucketItems
+// IMPORTANT: Parent's principalState1[0].items ≠ Child's bucketItems
 // When child updates an item, ensure it signals parent OR parent re-loads
 ```
 
@@ -121,7 +123,7 @@ handleUpdateItem(event) {
             if (!res.success) throw new Error(res.message);
             
             // Update principal state from response
-            this.unassignedItems = this.unassignedItems.map(t =>
+            this.principalState2 = this.principalState2.map(t =>
                 t.id === res.data.id ? res.data : t
             );
         })
@@ -131,18 +133,3 @@ handleUpdateItem(event) {
         });
 }
 ```
-
-## Separation of Concerns
-
-| Layer | Responsibility | Example |
-|---|---|---|
-| **Principal state** | Server-backed data with CRUD | `buckets`, `unassignedItems`, `topics` |
-| **Derived state** | Computed getters (read-only) | `hasBuckets()`, `activeBucketName()` |
-| **Control state** | UI visibility | `showBucketModal`, `isExpanded` |
-| **Selection state** | What's selected/hovered | `_selectedItemIds`, `_activeBucketId` |
-| **Communication state** | Async operations | `isLoading`, `isLoadingItems` |
-| **Picklist state** | Reference data | `statusOptions`, `memberOptions` |
-| **Server indicators** | Pagination/sync metadata | `offset`, `hasMore` |
-
----
-

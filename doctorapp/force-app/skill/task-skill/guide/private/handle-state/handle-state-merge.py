@@ -55,6 +55,27 @@ INDEX_NAME = "handle-state.md"
 
 INDEX_DOC = """# LWC State Management Guide
 
+## Initialization Lifecycle (connectedCallback Order)
+
+Every LWC that loads both **picklist/static options** and **principal data** must follow this order in `connectedCallback`:
+
+1. **Load picklists first** (Case 1 data).  
+   - Call the methods that populate `@track stateXOptions = []`.
+   - These are reference data; they load quickly and rarely change.
+   - **Why first?** So that any computed getters or UI logic that depends on them (e.g., lookup labels) works correctly when principal data arrives.
+
+2. **Load principal data** (Case 3 data) after picklists have resolved.  
+   - Load buckets, items, topics, etc. using the appropriate service/apex method.
+   - This includes loading server indicators (Case 2) alongside the principal data.
+
+**Example:**
+
+```javascript
+connectedCallback() {
+    this.loadReferences();      // step 1
+}
+
+
 Four categories of LWC state, each with its own storage, scope, and update rules. Use this index to find the guide that matches your situation.
 
 ---
