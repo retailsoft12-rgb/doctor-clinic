@@ -17,6 +17,10 @@ _toast(title, message, variant) {
 }
 ```
 
+```
+ALWAYS FOR ERROR WE SHOULD USE ShowToastEvent
+```
+
 Call `this._toast('Error', message, 'error')` from:
 - `.catch(err => ...)` of an imperative Apex call
 - The `result.error` / `result.data.success === false` branches of a `@wire` callback
