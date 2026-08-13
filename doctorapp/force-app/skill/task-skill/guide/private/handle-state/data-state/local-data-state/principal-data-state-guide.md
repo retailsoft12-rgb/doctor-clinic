@@ -61,8 +61,6 @@ A new feature is principal data when:
 
 1. **It's loaded directly from the server** (not derived from existing data)
 2. **It supports full CRUD** (or a subset thereof)
-3. **It's not a picklist** (Case 1: always separate, small, static)
-4. **It's not a server indicator** (Case 2: pagination/sync metadata)
 
 ```javascript
 // ✅ If the feature loads principalState1 at init time:
@@ -103,33 +101,4 @@ connectedCallback() {
 
 // IMPORTANT: Parent's principalState1[0].items ≠ Child's bucketItems
 // When child updates an item, ensure it signals parent OR parent re-loads
-```
-
-## Data Flow: Update Pattern
-
-All updates to principal state flow through this pattern:
-
-```javascript
-// 1. Call Apex (server write)
-// 2. On success: Update principal state from response
-// 3. On error: Show toast, don't update state
-
-handleUpdateItem(event) {
-    const itemId = event.detail.itemId;
-    const updates = event.detail.updates;
-
-    updateItem({ itemId, ...updates })
-        .then(res => {
-            if (!res.success) throw new Error(res.message);
-            
-            // Update principal state from response
-            this.principalState2 = this.principalState2.map(t =>
-                t.id === res.data.id ? res.data : t
-            );
-        })
-        .catch(err => {
-            this._toast('Error', err.body?.message || err.message, 'error');
-            // Principal state NOT updated on error
-        });
-}
 ```

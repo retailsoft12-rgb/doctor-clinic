@@ -54,30 +54,10 @@ order:
 NEVER introduce a new flag if a suitable one already exists — the goal is one
 spinner-driving flag per visual region, not one per handler.
 
-### Step 3 — Patch the JS handler
-
-Apply this exact shape to the handler body:
-
-```js
-handleSomething(event) {
-    //....
-    this.isLoading = true;                       // ← added
-    apexMethod({ //...
-    })
-        .then(res => {
-            //...
-            // ... happy path: update state, close modal, toast
-        })
-        .catch(...)
-        .finally(() => { this.isLoading = false; }); // ← added
-}
 ```
 
 Rules:
 
-- The `isLoading = true` assignment goes **after** any cheap synchronous
-  validation that might `return` early. Don't flip the spinner on if the
-  function is about to bail out without ever calling Apex.
 - The `.finally` goes **after** `.catch`, never before it. Promise chains
   resolve in declared order; putting `finally` first means a synchronous
   error in `then` won't reset the flag.
