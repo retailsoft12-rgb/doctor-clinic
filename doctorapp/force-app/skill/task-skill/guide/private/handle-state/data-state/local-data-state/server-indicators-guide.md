@@ -99,21 +99,3 @@ export default class ManageItems extends LightningElement {
     }
 }
 ```
-
-## Rule
-
-**Server indicators live near their data, not mixed with picklists or communication state.**
-
-Pairing ensures that when you update the data, the indicators move with it:
-
-```javascript
-// ✅ Correct: When data and indicators move together
-const updatedBucket = {
-    ...this.buckets[0],
-    offset: newOffset,
-    hasMore: newHasMore
-};
-this.buckets = [updatedBucket, ...this.buckets.slice(1)];
-```
-
----
