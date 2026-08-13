@@ -64,21 +64,6 @@ export default class ManageItems extends LightningElement {
     @track state2Options = [];
     @track state3Options = [];
 
-    // 2. PRINCIPAL DATA (server-backed) — separate
-
-    // 3. SERVER INDICATORS — grouped with related data
-
-    connectedCallback() {
-        this.loadReferences();  // Load picklists first
-       // Then load main data
-    }
-
-    async loadReferences() {
-        const result = await loadPicklistOptions();
-        this.state1Options = result.data.statuses;
-        this.state2Options = result.data.members;
-        this.state3Options = result.data.itemTypes;
-    }
 }
 ```
 
