@@ -34,7 +34,7 @@ in the session scratchpad directory.
 
 **Pitfalls are not loaded here.** `scratchpad-memory.md` holds interview answers
 and findings only — it is not a pitfall catalog. The pitfall files are read
-straight from `force-app/skill/pitfat/` by the sub-skill at code-writing time
+straight from `force-app/skill/pitfall/` by the sub-skill at code-writing time
 (Step 6 → the sub-skill's Step 0), together with the merged guides. Do not glob,
 read, copy, or summarise a pitfall file anywhere in this caller skill.
 
@@ -635,7 +635,7 @@ sections:
 
 | Sub-skill needs | Reads from |
 |---|---|
-| Pitfalls to check the generated code against | **not** `scratchpad-memory.md` — the sub-skill globs and reads `force-app/skill/pitfat/**/*.md` itself at its Step 0, every file, every time, right before it writes code |
+| Pitfalls to check the generated code against | **not** `scratchpad-memory.md` — the sub-skill globs and reads `force-app/skill/pitfall/**/*.md` itself at its Step 0, every file, every time, right before it writes code |
 | Parent LWC name and code paths | section 4 |
 | Sub-component selection | section 5 |
 | User stories, behavior, validation answers | section 1 (Tabs 3, 4, 5a, 5b) |

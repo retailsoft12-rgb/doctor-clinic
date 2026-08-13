@@ -26,7 +26,7 @@ this skill the path to that file.
   decisions go into the file, not into loose context.
 
 The one exception is reference material, which is read from disk rather than from
-the memory file: the pitfall files (`force-app/skill/pitfat/`) and the merged
+the memory file: the pitfall files (`force-app/skill/pitfall/`) and the merged
 guides, both loaded in Step 0. Those are not inputs the caller gathered — they
 are the rules the recorded inputs get applied under.
 
@@ -60,7 +60,7 @@ step" for how required / optional guides are read.
 The caller does **not** copy pitfalls into `scratchpad-memory.md`. Read them from
 disk at the start of this skill:
 
-1. Glob `force-app/skill/pitfat/**/*.md` to list **every** pitfall file. Do not
+1. Glob `force-app/skill/pitfall/**/*.md` to list **every** pitfall file. Do not
    hand-pick and do not filter by what the request "looks like" — relevance is
    judged against the code as it is written, not against the file name.
 2. Read each one **in full**. A pitfall is a code-level trap; summarising it
@@ -130,7 +130,7 @@ reads the rest of the context the same way).
 
 Do not evaluate the Part 1 gate until, in this order:
 
-1. every file in `force-app/skill/pitfat/` is read in full,
+1. every file in `force-app/skill/pitfall/` is read in full,
 2. all three required guides (1 → 2 → 3) are loaded in their order, plus
    `lwc-css-design-guide`, plus the conditional history guide if § 3 triggered
    it,
