@@ -13,10 +13,10 @@ steps:
     type: call
     message: "doOperation(record, related, params)"
   2 - from: service
-    to: DomainCompleteValidator
+    to: validator
     type: call
     message: "requireRule(data)"
-  3 - from: DomainCompleteValidator
+  3 - from: validator
     to: service
     type: return
     message: "ok (else throw)"
@@ -232,7 +232,6 @@ public static <Object>__c complete<Noun>(<Object>__c record) {
 
 ---
 
-You cannot go before check that all participant is exist
 ## → Next: [Phase 3 — Persist](phase-3-persist.md)
 
 Every business rule has passed. Continue there for the DML, the cross-domain

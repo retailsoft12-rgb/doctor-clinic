@@ -19,10 +19,11 @@ Keep picklists in separate tracked fields, named to clearly identify them as opt
 ```javascript
 export default class ManageItems extends LightningElement {
     // ✅ CORRECT: Picklist options isolated in dedicated fields
-    @track state1Options = [];
-    @track state2Options = [];
-    @track state3Options = [];
-    @track state4Options = [];
+    @track statusOptions = [];
+    @track memberOptions = [];
+    @track itemTypeOptions = [];
+    @track priorityOptions = [];
+    _itemLinkedToTypeOptions = [];
 }
 ```
 
@@ -30,10 +31,11 @@ export default class ManageItems extends LightningElement {
 
 | Field | Purpose |
 |-------|---------|
-| `state1Options` | state1 picklist |
-| `state2Options` | Team member choices |
-| `state3Options` | Item type choices |
-| `state4Options` | Priority levels |
+| `statusOptions` | Status picklist |
+| `memberOptions` | Team member choices |
+| `itemTypeOptions` | Item type choices |
+| `priorityOptions` | Priority levels |
+| `_itemLinkedToTypeOptions` | Link type choices |
 
 ## Anti-patterns to avoid
 
@@ -42,8 +44,8 @@ export default class ManageItems extends LightningElement {
 this.bucketData = {
     id: 'bucket-123',
     name: 'Bucket 1',
-    state1Options: [{ id: 'open', label: 'Open' }],  // Don't do this
-    state2Options: [{ id: 'user-1', label: 'Alice' }] // Don't do this
+    statusOptions: [{ id: 'open', label: 'Open' }],  // Don't do this
+    memberOptions: [{ id: 'user-1', label: 'Alice' }] // Don't do this
 };
 
 // ❌ WRONG: Merging picklist with server indicators
@@ -51,7 +53,7 @@ this.itemState = {
     items: [...],
     offset: 0,
     hasMore: false,
-    state1Options: [...],  // Wrong layer
+    statusOptions: [...],  // Wrong layer
 };
 ```
 
@@ -60,10 +62,34 @@ this.itemState = {
 ```javascript
 export default class ManageItems extends LightningElement {
     // 1. REFERENCE DATA (picklists) — isolated
-    @track state1Options = [];
-    @track state2Options = [];
-    @track state3Options = [];
+    @track statusOptions = [];
+    @track memberOptions = [];
+    @track itemTypeOptions = [];
 
+    // 2. PRINCIPAL DATA (server-backed) — separate
+    @track buckets = [];
+    @track unassignedItems = [];
+
+    // 3. SERVER INDICATORS — grouped with related data
+    unassignedOffset = 0;
+    unassignedHasMore = false;
+
+    connectedCallback() {
+        this.loadReferences();  // Load picklists first
+        this.loadPrincipalData(); // Then load main data
+    }
+
+    async loadReferences() {
+        const result = await loadPicklistOptions();
+        this.statusOptions = result.data.statuses;
+        this.memberOptions = result.data.members;
+        this.itemTypeOptions = result.data.itemTypes;
+    }
+
+    async loadPrincipalData() {
+        const result = await loadBuckets();
+        this.buckets = result.data;
+    }
 }
 ```
 
@@ -72,3 +98,14 @@ export default class ManageItems extends LightningElement {
 **Keep in separate tracked fields. Never merge with principal data or server indicators.**
 
 Derived state (getters) can reference picklists for lookups:
+
+```javascript
+// ✅ OK: Getter uses picklist for lookup
+get itemTypeName() {
+    const typeOption = this.itemTypeOptions.find(
+        opt => opt.id === this.activeItem.itemTypeId
+    );
+    return typeOption?.label || 'Unknown';
+}
+```
+

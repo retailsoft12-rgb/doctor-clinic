@@ -77,10 +77,25 @@ this.state = {
 
 ```javascript
 export default class ManageItems extends LightningElement {
+    // 1. REFERENCE DATA (picklists) — isolated
+    @track statusOptions = [];
+    @track memberOptions = [];
+
+    // 2. PRINCIPAL DATA (server-backed)
+    @track unassignedItems = [];
+    @track buckets = [];
 
     // 3. SERVER INDICATORS — grouped with their data
     @track unassignedOffset = 0;      // Paired with unassignedItems
     @track unassignedHasMore = false; // Paired with unassignedItems
+
+    // Note: Each bucket in buckets[] has its own offset/hasMore
+
+    // 4. CONTROL STATE
+    showBucketModal = false;
+
+    // 5. COMMUNICATION STATE — never mixed with data
+    isLoading = false;  // For async operations
 
     async loadUnassigned() {
         isLoading = true;
@@ -97,5 +112,40 @@ export default class ManageItems extends LightningElement {
             isLoading = false;
         }
     }
+
+    async loadBucketItems(bucketId) {
+        const bucket = this.buckets.find(s => s.id === bucketId);
+        if (!bucket) return;
+
+        bucket.isLoadingItems = true;  // Communication flag (paired)
+        try {
+            const result = await loadBucketItems({ bucketId });
+            bucket.items = result.data.items;
+            bucket.offset = result.data.offset;  // Server indicator
+            bucket.hasMore = result.data.hasMore; // Server indicator
+        } catch (err) {
+            this._toast('Error', err.message, 'error');
+        } finally {
+            bucket.isLoadingItems = false;  // Clear communication flag
+        }
+    }
 }
 ```
+
+## Rule
+
+**Server indicators live near their data, not mixed with picklists or communication state.**
+
+Pairing ensures that when you update the data, the indicators move with it:
+
+```javascript
+// ✅ Correct: When data and indicators move together
+const updatedBucket = {
+    ...this.buckets[0],
+    offset: newOffset,
+    hasMore: newHasMore
+};
+this.buckets = [updatedBucket, ...this.buckets.slice(1)];
+```
+
+---

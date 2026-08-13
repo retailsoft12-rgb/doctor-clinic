@@ -15,6 +15,4 @@ Before any network call.
 
 **ELSE**
 
-
-You cannot go before check that all participant is exist
 → Go to [phase-2-spinner-up.md](phase-2-spinner-up.md).

@@ -54,10 +54,29 @@ order:
 NEVER introduce a new flag if a suitable one already exists — the goal is one
 spinner-driving flag per visual region, not one per handler.
 
+### Step 3 — Patch the JS handler
+
+Apply this exact shape to the handler body:
+
+```js
+handleSomething(event) {
+    const data = event.detail;
+    this.isLoading = true;                       // ← added
+    apexMethod({ ...data })
+        .then(res => {
+            if (!res.success) throw new Error(res.message || 'Error ...');
+            // ... happy path: update state, close modal, toast
+        })
+        .catch(err => this._showError(err.body?.message || err.message || 'Error ...'))
+        .finally(() => { this.isLoading = false; }); // ← added
+}
 ```
 
 Rules:
 
+- The `isLoading = true` assignment goes **after** any cheap synchronous
+  validation that might `return` early. Don't flip the spinner on if the
+  function is about to bail out without ever calling Apex.
 - The `.finally` goes **after** `.catch`, never before it. Promise chains
   resolve in declared order; putting `finally` first means a synchronous
   error in `then` won't reset the flag.
@@ -82,7 +101,7 @@ toggle is **split across two methods**:
 
 handleItemLinkedToExpand(event) {
     this.isLoading = true;                              // ← flip ON here
-   //... triggers the wire
+    this._linkedToTargetItemId = event.detail.itemId; // ← triggers the wire
 }
 ```
 
@@ -132,11 +151,12 @@ handleTopicsForWorkspace(workspaceId) {
     //   (1) same value the param already holds → wire won't refire at all
     //   (2) a value already fetched once       → LDS serves it from cache
     if (workspaceId === this._topicsTargetWorkspaceId || this._fetchedWorkspaceIds.has(workspaceId)) {
-         // still switch the view (cache-served)
+        this._topicsTargetWorkspaceId = workspaceId;   // still switch the view (cache-served)
         return;                                    // leave isLoading untouched
     }
     this.isLoading = true;                         // genuine cache miss → real fetch
-  
+    this._fetchedWorkspaceIds.add(workspaceId);
+    this._topicsTargetWorkspaceId = workspaceId;
 }
 ```
 
@@ -205,6 +225,71 @@ Two things to verify instead:
 The overlay also dims the page behind it — that's intentional; it both signals
 "the app is busy" and blocks click-throughs on whatever the user was just
 interacting with (modal buttons, item rows, drag handles).
+
+### Step 6 — Spot-check sibling handlers (optional cleanup)
+
+After the new handler is wired, scan the same JS file for OTHER imperative
+Apex handlers that are missing the same `isLoading` / `.finally` pair. If
+you find one or two trivial omissions, mention them to the user as a
+suggested follow-up — do NOT silently fix them all in the same edit, since
+the user only asked about the one handler. The goal is to surface the
+inconsistency, not to balloon the diff.
+
+---
+
+## Anti-patterns to refuse
+
+| Anti-pattern | Why it's wrong | Fix |
+|--------------|----------------|-----|
+| Setting `isLoading = false` in BOTH `.then` and `.catch` | `.finally` already covers both — duplicates drift apart when one is edited | Use `.finally` only |
+| Putting `.finally` before `.catch` | A handler in `.then` that throws skips straight to `.catch`, and `.finally` only sees the post-catch state — order matters for readability and tooling | `.then` → `.catch` → `.finally` |
+| Hand-rolling a `<lightning-spinner>` + `.loading-overlay` div | Re-implements what `c-ao-spinner overlay` already owns (backdrop + z-index), and a bare spinner inherits the parent stacking context, hiding behind modals | Use `<c-ao-spinner overlay>` at the root template |
+| Nesting `<c-ao-spinner overlay>` inside a `position`/`z-index` section | Its fixed overlay is confined to that ancestor's stacking context and hides behind modals | Render it at the component's root `<template>` |
+| New per-handler boolean (`isSavingComment`, `isDeletingThing`) | One spinner-driving flag per visual region is enough; per-handler flags multiply state | Reuse the existing `isLoading` (or the region-scoped flag) |
+| Flipping `isLoading = true` BEFORE early-return validation | Spinner flashes and clears for actions that never hit the network | Do validation first, then flip the flag |
+| Leaving a surface at `z-index >= 9999` in the same file | It fights `c-ao-spinner`'s overlay (fixed at `9999`) | Lower that surface to the conventional `9001` |
+| Flipping `isLoading = true` before assigning a reactive `@wire` param without checking the value first | If the new value equals the current one the wire never refires and the spinner stays on forever; if it's a value already fetched, LDS serves it from cache and the spinner just flashes | Only flip on for a genuine cache **miss** (new, never-fetched value); leave `isLoading` untouched for same / already-fetched values |
+| Calling `refreshApex` just to re-trigger the spinner on a same or already-cached value | `refreshApex` re-fetches from the server — it's for stale **backend** data, not for re-rendering UI you already hold; it hides the real toggle bug | Guard the assignment instead; reserve `refreshApex` for genuine server-side refreshes |
+
+---
+
+## Worked example (from this codebase)
+
+`manageItems.handleBucketItemCreate` was added to dispatch
+`createItemFromBucket` but did not toggle `isLoading`. Three coordinated
+edits made it correct:
+
+**JS** (`manageItems.js`):
+
+```js
+handleBucketItemCreate(event) {
+    const data = event.detail;
+    this.isLoading = true;
+    createItemFromBucket(data)
+        .then(res => {
+            if (!res.success) throw new Error(res.message || 'Error creating item from bucket');
+            const item        = formatItem(res.data.createdItem, this.itemTypeOptions, data.itemTypeId);
+            const updatedBucket = formatBucket(res.data.updatedBucket);
+            this._enrichBucketWithAddedItem(updatedBucket, item);
+            this.showBucketItemModal = false;
+            this._showSuccess('Item added to bucket');
+        })
+        .catch(err => this._showError(err.body?.message || err.message || 'Error creating item from bucket'))
+        .finally(() => { this.isLoading = false; });
+}
+```
+
+**HTML** (`manageItems.html`):
+
+```html
+<template if:true={isLoading}>
+    <c-ao-spinner overlay size="medium" alternative-text="Loading..."></c-ao-spinner>
+</template>
+```
+
+**CSS** (`manageItems.css`): nothing to add. `c-ao-spinner overlay` carries
+its own fixed backdrop and `z-index: 9999` inside its shadow DOM. The modal
+sits at `z-index: 9001`; the spinner's overlay at `9999` covers it.
 
 ---
 

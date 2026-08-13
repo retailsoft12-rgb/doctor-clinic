@@ -12,6 +12,4 @@ Back end not modelled.
 2. **Apex (cacheable=true) ⇢ wire service + LDS** — `APIResponse | error`
 3. **wire service + LDS ⇢ component.js** — `wiredX({ data, error })`
 
-You cannot go before check that all participant is exist
-
 → Go to [phase-5-handle-data-error.md](phase-5-handle-data-error.md).

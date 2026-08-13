@@ -11,6 +11,4 @@ next: none
 
 ## Error handling — the only channel
 
-
-You cannot go before check that all participant is exist
 - `ShowToastEvent` only — no `@track errorMessage`, no inline banner, never console-only.

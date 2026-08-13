@@ -62,7 +62,7 @@ sequence:
     - id: service
       name: Service
     - id: validator
-      name: DomainCompleteValidator
+      name: DomainComplete Validator
     - id: otherService
       name: OtherService
     - id: dao
@@ -84,7 +84,8 @@ sequence:
       resolves input ids through the Dao of the object it guards
     dao: >-
       classes/dao/<Name>Dao.cls — one Dao per domain object; the ONLY layer that
-      writes SOQL for that object, query-only.
+      writes SOQL for that object, query-only, no DML and no business rules
+    validator: "classes/domain/DomainCompleteValidator.cls"
     dto: >-
       classes/domain/<Name>Dto.cls — composite / nested RESPONSE shapes only;
     shared: >-
@@ -94,7 +95,7 @@ sequence:
 
   dbAccessRule: >-
     every SOQL statement in every phase is written inside classes/dao/<Name>Dao.cls
-    — the controller, DomainCorrectness, the Service and DomainCompleteCorrectness
+    — the controller, DomainCorrectness, the Service and DomainCompleteValidator
     all reach the database through a Dao and never carry a [SELECT] of their own.
     DML is the one exception: it stays in the Service that owns the object.
 

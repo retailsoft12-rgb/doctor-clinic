@@ -11,36 +11,37 @@ Modal or drawer visibility is a single tracked boolean that flips when the user 
 **JavaScript:**
 
 ```javascript
-@track  showModal1 = false;
-@track  showModal2 = false;
+@track showBucketModal = false;
+@track _showChooseWorkspace = false;
 
 handleOpenBucketModal() {
-    this.showModal1 = true;
+    this.showBucketModal = true;
 }
 
 handleCloseBucketModal() {
-    this.showModal1 = false;
+    this.showBucketModal = false;
 }
 
 // Create item and auto-close on success
 handleBucketItemCreate(event) {
     const data = event.detail;
     this.isLoading = true;
-    funtionName1(data)
+    createItemFromBucket(data)
         .then(res => {
-            //... 
-            this.showModal1 = false; // ← auto-close
-            //... show for the error 
+            if (!res.success) throw new Error(res.message);
+            this._enrichBucketWithAddedItem(res.data.updatedBucket, res.data.createdItem);
+            this.showBucketModal = false; // ← auto-close
+            this._showSuccess('Item added to bucket');
         })
-        .catch(...)
-        .finally(...);
+        .catch(err => this._showError(err.body?.message || err.message))
+        .finally(() => { this.isLoading = false; });
 }
 ```
 
 **HTML:**
 
 ```html
-<template if:true={showModal1}>
+<template if:true={showBucketModal}>
     <c-ao-modal 
         header="Add Item to Bucket"
         onclose={handleCloseBucketModal}>
@@ -54,7 +55,7 @@ handleBucketItemCreate(event) {
 
 **Rules:**
 - One boolean per modal — never multiplex multiple modals onto one flag
-- Named after the surface: `showModal1`, `showModal2` (not `modal1`, `isOpen`)
+- Named after the surface: `showBucketModal`, `_showChooseWorkspace` (not `modal1`, `isOpen`)
 - Flip from handlers only — never from Apex results or computed logic
 - Close on action success (auto-close) or user dismissal
 
@@ -167,7 +168,7 @@ get topDropZoneClass() {
 
 | Scenario | Pattern | Example |
 |----------|---------|---------|
-| Modal/drawer open/close | Single `@track boolean`, flip from handlers | `showModal1`, `showModal2` |
+| Modal/drawer open/close | Single `@track boolean`, flip from handlers | `showBucketModal`, `_showChooseWorkspace` |
 | Drag-and-drop feedback | Multiple flags for source + target + visual, clear on dragend | `_dragSourceItemId`, `_activeDropItemId`, `dropIndicatorClass` |
 
 ---
@@ -176,7 +177,7 @@ get topDropZoneClass() {
 
 | Anti-pattern | Fix |
 |---|---|
-| Storing form data in the same field as modal visibility | Separate fields: `showModal1` (boolean) + `bucketForm` (data) |
+| Storing form data in the same field as modal visibility | Separate fields: `showBucketModal` (boolean) + `bucketForm` (data) |
 | Multiple modals sharing one boolean | One flag per modal |
 | Not clearing drag state after drop succeeds or fails | Always clear in `.finally()` after moveItem resolves |
 | Computing modal visibility from data (`get showModal() { return this.data.length > 0 }`) | Visibility is user-driven; use separate selection state if showing context |

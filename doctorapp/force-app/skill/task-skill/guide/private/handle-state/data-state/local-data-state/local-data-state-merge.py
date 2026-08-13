@@ -52,7 +52,7 @@ Start with this question: **Is this data loaded from the server, or is it a refe
 1. **Is it a picklist, dropdown list, or static reference set?**
    → **[READ Case 1: Picklist & Static Options](#case-1-picklist--static-options)**
 
-2. **Is it pagination info, sync metadata, or a flag that describes other data? (!! Server indicators live near their data, not mixed with picklists or communication state.)**
+2. **Is it pagination info, sync metadata, or a flag that describes other data?**
    → **[READ Case 2: Server Indicators](#case-2-server-indicators)**
 
 3. **Is it an entity (like an item or bucket) that your component loads and can modify?**
