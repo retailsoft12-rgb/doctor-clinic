@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Rate_Within_Range</fullName>
+    <active>true</active>
+    <description>Tax rate must be between 0 and 100 percent.</description>
+    <errorConditionFormula>Rate__c &lt; 0 || Rate__c &gt; 100</errorConditionFormula>
+    <errorMessage>Rate must be between 0 and 100.</errorMessage>
+    <errorDisplayField>Rate__c</errorDisplayField>
+</ValidationRule>

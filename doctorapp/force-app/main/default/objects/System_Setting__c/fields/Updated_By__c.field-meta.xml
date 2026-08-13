@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Updated_By__c</fullName>
+    <description>Who last changed this setting.</description>
+    <label>Updated By</label>
+    <referenceTo>User</referenceTo>
+    <relationshipLabel>POS System Settings</relationshipLabel>
+    <relationshipName>POS_System_Settings</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

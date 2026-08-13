@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Effective_Dates_Ordered</fullName>
+    <active>true</active>
+    <description>Effective To cannot precede Effective From.</description>
+    <errorConditionFormula>NOT(ISBLANK(Effective_To__c)) &amp;&amp; Effective_To__c &lt; Effective_From__c</errorConditionFormula>
+    <errorMessage>Effective To must be on or after Effective From.</errorMessage>
+    <errorDisplayField>Effective_To__c</errorDisplayField>
+</ValidationRule>

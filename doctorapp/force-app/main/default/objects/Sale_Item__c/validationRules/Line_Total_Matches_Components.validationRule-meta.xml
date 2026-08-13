@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Line_Total_Matches_Components</fullName>
+    <active>true</active>
+    <description>Line total must equal (quantity x unit price) - discount + tax.</description>
+    <errorConditionFormula>Line_Total__c &lt;&gt; ((Quantity__c * Unit_Price__c) - Discount_Amount__c + Tax_Amount__c)</errorConditionFormula>
+    <errorMessage>Line Total must equal (Quantity x Unit Price) - Discount Amount + Tax Amount.</errorMessage>
+    <errorDisplayField>Line_Total__c</errorDisplayField>
+</ValidationRule>

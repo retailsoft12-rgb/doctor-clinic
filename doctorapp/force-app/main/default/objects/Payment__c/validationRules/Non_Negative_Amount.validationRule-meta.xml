@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Non_Negative_Amount</fullName>
+    <active>true</active>
+    <description>Payment amount cannot be negative.</description>
+    <errorConditionFormula>Amount__c &lt; 0</errorConditionFormula>
+    <errorMessage>Amount cannot be negative.</errorMessage>
+    <errorDisplayField>Amount__c</errorDisplayField>
+</ValidationRule>

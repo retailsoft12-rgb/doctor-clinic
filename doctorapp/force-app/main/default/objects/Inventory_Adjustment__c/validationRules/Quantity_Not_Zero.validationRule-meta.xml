@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Quantity_Not_Zero</fullName>
+    <active>true</active>
+    <description>An adjustment must move stock up or down, never by zero.</description>
+    <errorConditionFormula>Quantity__c = 0</errorConditionFormula>
+    <errorMessage>Quantity cannot be zero.</errorMessage>
+    <errorDisplayField>Quantity__c</errorDisplayField>
+</ValidationRule>

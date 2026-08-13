@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Min_Quantity_At_Least_Two</fullName>
+    <active>true</active>
+    <description>A bulk threshold below two is meaningless.</description>
+    <errorConditionFormula>NOT(ISBLANK(Min_Quantity__c)) &amp;&amp; Min_Quantity__c &lt; 2</errorConditionFormula>
+    <errorMessage>Min Quantity must be 2 or more when specified.</errorMessage>
+    <errorDisplayField>Min_Quantity__c</errorDisplayField>
+</ValidationRule>

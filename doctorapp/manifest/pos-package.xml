@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>Store__c</members>
+        <members>Category__c</members>
+        <members>Supplier__c</members>
+        <members>Product__c</members>
+        <members>Customer__c</members>
+        <members>Sale__c</members>
+        <members>Sale_Item__c</members>
+        <members>Payment__c</members>
+        <members>Return__c</members>
+        <members>Return_Item__c</members>
+        <members>Inventory_Adjustment__c</members>
+        <members>Tax_Setting__c</members>
+        <members>Discount_Rule__c</members>
+        <members>Audit_Log__c</members>
+        <members>System_Setting__c</members>
+        <members>Loyalty_Points_Log__c</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>POS_Admin</members>
+        <name>PermissionSet</name>
+    </types>
+    <version>66.0</version>
+</Package>

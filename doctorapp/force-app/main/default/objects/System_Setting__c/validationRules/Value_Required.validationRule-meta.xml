@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Value_Required</fullName>
+    <active>true</active>
+    <description>A setting must carry a value (long text areas cannot be flagged required).</description>
+    <errorConditionFormula>LEN(TRIM(Value__c)) = 0</errorConditionFormula>
+    <errorMessage>Value is required.</errorMessage>
+    <errorDisplayField>Value__c</errorDisplayField>
+</ValidationRule>

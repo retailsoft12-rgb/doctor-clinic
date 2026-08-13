@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Value_Within_Range</fullName>
+    <active>true</active>
+    <description>Discount value must be positive, and at most 100 when it is a percentage.</description>
+    <errorConditionFormula>Value__c &lt; 0 || (ISPICKVAL(Type__c, &quot;Percentage&quot;) &amp;&amp; Value__c &gt; 100)</errorConditionFormula>
+    <errorMessage>Value cannot be negative, and a percentage discount cannot exceed 100.</errorMessage>
+    <errorDisplayField>Value__c</errorDisplayField>
+</ValidationRule>

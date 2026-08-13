@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>User__c</fullName>
+    <description>Cashier processing the return.</description>
+    <label>Processed By</label>
+    <referenceTo>User</referenceTo>
+    <relationshipLabel>POS Returns Processed</relationshipLabel>
+    <relationshipName>POS_Returns_Processed</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>
