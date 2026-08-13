@@ -1,3 +1,7 @@
+# RULE
+isLoading should be implementated only for call apex method!!
+In normal frontEnd like open and close the loading guide have no place!!
+
 # LWC Apex Loading Spinner
 
 Every imperative Apex call in an LWC parent component is a network round-trip
