@@ -81,9 +81,10 @@ python force-app/skill/task-skill/guide/guides-build.py
 
 Then understand, in this order:
 
-1. [../guide/sequence-fe-desicion-TEMPORARY.md](../guide/sequence-fe-desicion-TEMPORARY.md)
-2. [../guide/sequence-be-TEMPORARY.md](../guide/sequence-be-TEMPORARY.md)
-3. [../guide/handle-state-TEMPORARY.md](../guide/handle-state-TEMPORARY.md)
+1. [../guide/handle-state-TEMPORARY.md](../guide/handle-state-TEMPORARY.md)
+2. [../guide/sequence-fe-desicion-TEMPORARY.md](../guide/sequence-fe-desicion-TEMPORARY.md)
+3. [../guide/sequence-be-TEMPORARY.md](../guide/sequence-be-TEMPORARY.md)
+ 
 
 The project-wide soft-delete filter (`soql-exclude-deleted`) is **not** listed
 here: it fires automatically from CLAUDE.md whenever a new or edited `SELECT`
